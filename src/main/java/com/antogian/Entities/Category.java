@@ -7,6 +7,7 @@ public class Category
 {
     private String name;
     private List<Item> allItems;
+    private int index;
 
     public Category()
     {
@@ -39,5 +40,15 @@ public class Category
     public void setAllItems(List<Item> allItems)
     {
         this.allItems = allItems;
+    }
+
+    public int getIndex()
+    {
+        return index;
+    }
+
+    public void setIndex(int index)
+    {
+        this.index = index;
     }
 }

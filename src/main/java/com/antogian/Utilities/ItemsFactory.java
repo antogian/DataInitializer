@@ -41,18 +41,22 @@ public final class ItemsFactory
                         if(name == null || name.equals(""))
                             continue;
                         itemRow.setName(name);
+                        int index = objectNode.get("Col5").getAsInt();
+                        itemRow.setIndex(index);
+                        int[][] inclusions = new int[6][];
                         String inclusions1 = objectNode.get("Col16").getAsString();
-                        itemRow.setInclusions1(getInclusions(inclusions1));
+                        inclusions[0] = getInclusionsAsArray(inclusions1);
                         String inclusions2 = objectNode.get("Col17").getAsString();
-                        itemRow.setInclusions2(getInclusions(inclusions2));
+                        inclusions[1] = getInclusionsAsArray(inclusions2);
                         String inclusions3 = objectNode.get("Col18").getAsString();
-                        itemRow.setInclusions3(getInclusions(inclusions3));
+                        inclusions[2] = getInclusionsAsArray(inclusions3);
                         String inclusions4 = objectNode.get("Col19").getAsString();
-                        itemRow.setInclusions4(getInclusions(inclusions4));
+                        inclusions[3] = getInclusionsAsArray(inclusions4);
                         String inclusions5 = objectNode.get("Col20").getAsString();
-                        itemRow.setInclusions5(getInclusions(inclusions5));
+                        inclusions[4] = getInclusionsAsArray(inclusions5);
                         String inclusions6 = objectNode.get("Col21").getAsString();
-                        itemRow.setInclusions6(getInclusions(inclusions6));
+                        inclusions[5] = getInclusionsAsArray(inclusions6);
+                        itemRow.setInclusions(inclusions);
 
                         int[] freeChoices = new int[6];
                         int[] requiredChoices = new int[6];
@@ -78,8 +82,8 @@ public final class ItemsFactory
                         List<Modifier> itemMods = new ArrayList<Modifier>();
                         for(int k=1; k<=6; k++)
                         {
-                            int index = 21+k;
-                            String modName = objectNode.get("Col" + index).getAsString();
+                            int modIndex = 21+k;
+                            String modName = objectNode.get("Col" + modIndex).getAsString();
                             itemMods.add(getModifier(modName, modsList));
                         }
                         itemRow.setModifiers(itemMods);
@@ -97,7 +101,7 @@ public final class ItemsFactory
         }
         catch(Exception e)
         {
-            System.out.println("WARNING!!! EXCEPTION CAUGHT on ItemsGeneratorMethod Method");
+            System.out.println("WARNING!!! EXCEPTION CAUGHT on while generating Items");
         }
         return allItems;
     }
@@ -131,6 +135,29 @@ public final class ItemsFactory
             return inclusions;
         }
         return inclusions;
+    }
+
+    private static int[] getInclusionsAsArray(String jsonInclusions)
+    {
+        if(!(jsonInclusions == null || jsonInclusions.equals("") || !jsonInclusions.matches(".*\\d+.*")))
+        {
+                String[] parts = jsonInclusions.split(",");
+                List<Integer> ints = new ArrayList<Integer>();
+                for (int i = 0; i < parts.length; i++)
+                {
+                    if(!(parts[i] == null || parts[i].equals("") || !parts[i].matches(".*\\d+.*")))
+                    {
+                        ints.add(Integer.parseInt(parts[i]));
+                    }
+                }
+                int[] integers = new int[ints.size()];
+                for (int i = 0; i < ints.size(); i++)
+                {
+                    integers[i] = ints.get(i);
+                }
+                return integers;
+        }
+        return new int[0];
     }
 
     private static Modifier getModifier(String modString, List<Modifier> allMods)

@@ -4,6 +4,7 @@ public class ModEntry
 {
     private String name;
     private double cost;
+    private int index;
 
     public ModEntry()
     {
@@ -15,6 +16,16 @@ public class ModEntry
     {
         this.name = name;
         this.cost = cost;
+    }
+
+    public int getIndex()
+    {
+        return index;
+    }
+
+    public void setIndex(int index)
+    {
+        this.index = index;
     }
 
     public String getName()

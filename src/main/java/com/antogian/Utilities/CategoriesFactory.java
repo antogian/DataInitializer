@@ -39,6 +39,8 @@ public final class CategoriesFactory
                         if(name == null || name.equals(""))
                             continue;
                         cat.setName(name);
+                        int index = objectNode.get("Col4").getAsInt();
+                        cat.setIndex(index);
                         String itemsFilename = objectNode.get("Col5").getAsString();
                         itemsFilename = itemsFilename.substring(0, itemsFilename.lastIndexOf('.'));
                         for(int k=0; k<allItems.size(); k++)
@@ -55,5 +57,15 @@ public final class CategoriesFactory
         }
 
         return allCategories;
+    }
+
+    private static int getIndex(String jsonIndex)
+    {
+        int index = 0;
+
+        if(!(jsonIndex == null || jsonIndex.equalsIgnoreCase("")))
+        {
+        }
+        return index;
     }
 }

@@ -1,15 +1,17 @@
 package com.antogian.Entities;
 
+import java.util.List;
+
 public class Size
 {
     private String filename;
-    private String[] names;
+    private List<String> names;
 
     public Size()
     {
     }
 
-    public Size(String filename, String[] names)
+    public Size(String filename, List<String> names)
     {
         this.filename = filename;
         this.names = names;
@@ -25,12 +27,12 @@ public class Size
         this.filename = filename;
     }
 
-    public String[] getNames()
+    public List<String> getNames()
     {
         return names;
     }
 
-    public void setNames(String[] names)
+    public void setNames(List<String> names)
     {
         this.names = names;
     }

@@ -31,7 +31,7 @@ public class SizesFactory
                     JsonArray arrayNode = Parser.getJsonArray(jsonObject, jsonFilename);
                     Size newSize = new Size();
                     newSize.setFilename(jsonFilename);
-                    String[] allNames = new String[5];
+                    List<String> allNames = new ArrayList<String>();
                     for (int j = 1; j < arrayNode.size(); j++)
                     {
                         JsonElement elementNode = arrayNode.get(j);
@@ -39,7 +39,7 @@ public class SizesFactory
                         String name = objectNode.get("Col2").getAsString();
                         if(name == null || name.equals(""))
                             continue;
-                        allNames[j-1] = name;
+                        allNames.add(name);
                     }
                     newSize.setNames(allNames);
                     allSizes.add(newSize);

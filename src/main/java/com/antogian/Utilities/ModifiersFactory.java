@@ -43,6 +43,8 @@ public final class ModifiersFactory
                             if(name == null || name.equals(""))
                                 continue;
                             modEntry.setName(name);
+                            int index = objectNode.get("Col4").getAsInt();
+                            modEntry.setIndex(index);
                             String price = objectNode.get("Col19").getAsString();
                             if(!(price == null || price.equals("")))
                                 modEntry.setCost(objectNode.get("Col19").getAsDouble());
