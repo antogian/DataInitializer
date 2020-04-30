@@ -1,21 +1,22 @@
 package com.antogian.Entities;
 
+import java.util.List;
+
 public class ModEntry
 {
     private String name;
-    private double cost;
     private int index;
+    private List<Double> halfCost;
+    private List<Double> cost;
+    private boolean taxable;
 
     public ModEntry()
     {
-        name = "";
-        cost = 0.00;
     }
 
-    public ModEntry(String name, double cost)
+    public ModEntry(String name)
     {
         this.name = name;
-        this.cost = cost;
     }
 
     public int getIndex()
@@ -38,13 +39,33 @@ public class ModEntry
         this.name = name;
     }
 
-    public double getCost()
+    public List<Double> getCost()
     {
         return cost;
     }
 
-    public void setCost(double cost)
+    public void setCost(List<Double> cost)
     {
         this.cost = cost;
+    }
+
+    public List<Double> getHalfCost()
+    {
+        return halfCost;
+    }
+
+    public void setHalfCost(List<Double> halfCost)
+    {
+        this.halfCost = halfCost;
+    }
+
+    public boolean isTaxable()
+    {
+        return taxable;
+    }
+
+    public void setTaxable(boolean taxable)
+    {
+        this.taxable = taxable;
     }
 }

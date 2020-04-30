@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public final class ModifiersFactory
@@ -43,11 +44,47 @@ public final class ModifiersFactory
                             if(name == null || name.equals(""))
                                 continue;
                             modEntry.setName(name);
+
                             int index = objectNode.get("Col4").getAsInt();
                             modEntry.setIndex(index);
-                            String price = objectNode.get("Col19").getAsString();
-                            if(!(price == null || price.equals("")))
-                                modEntry.setCost(objectNode.get("Col19").getAsDouble());
+
+                            String taxable = objectNode.get("Col18").getAsString();
+                            if(taxable != null)
+                                if(taxable.equalsIgnoreCase("1") || taxable.equalsIgnoreCase(""))
+                                    modEntry.setTaxable(true);
+
+//                            String price = objectNode.get("Col19").getAsString();
+//                            if(!(price == null || price.equals("")))
+//                                modEntry.setCost(objectNode.get("Col19").getAsDouble());
+                            //------------------------------------------------------------------------------------------
+
+                            Double[] cost = new Double[5];
+                            for(int x=0; x<5; x++)
+                            {
+                                String costString = objectNode.get("Col" + (19+x)).getAsString();
+                                if(!(costString == null || costString.equals("")))
+                                    cost[x] = objectNode.get("Col" + (19+x)).getAsDouble();
+                            }
+                            modEntry.setCost(Arrays.asList(cost));
+
+                            //------------------------------------------------------------------------------------------
+                            objectNode = arrayNode.get(3).getAsJsonObject();
+                            String halfEnabledString = objectNode.get("Col2").getAsString();
+                            if (isHalfEnabled(halfEnabledString))
+                            {
+                                Double[] halfCost = new Double[5];
+                                for(int x=0; x<5; x++)
+                                {
+                                    objectNode = arrayNode.get(j).getAsJsonObject();
+                                    String halfCostString = objectNode.get("Col" + (24+x)).getAsString();
+                                    if(!(halfCostString == null || halfCostString.equals("")))
+                                        halfCost[x] = objectNode.get("Col" + (24+x)).getAsDouble();
+                                }
+                                modEntry.setHalfCost(Arrays.asList(halfCost));
+                            }
+                            //TODO: Empty halfCost instead of null
+                            //------------------------------------------------------------------------------------------
+
                             if(!isDuplicate(allModEntries, modEntry))
                                 allModEntries.add(modEntry);
                         }
@@ -65,10 +102,11 @@ public final class ModifiersFactory
                         mod.setEntries(allModEntries);
                         JsonObject objectNode = arrayNode.get(2).getAsJsonObject();
                         mod.setName(objectNode.get("Col2").getAsString());
+
                         objectNode = arrayNode.get(3).getAsJsonObject();
-                        String halfEnabled = objectNode.get("Col2").getAsString();
-                        if(halfEnabled == null || halfEnabled.equalsIgnoreCase(""))
-                            mod.setHalfEnabled(false);
+                        String halfEnabledString = objectNode.get("Col2").getAsString();
+                        mod.setHalfEnabled(isHalfEnabled(halfEnabledString));
+
                         objectNode = arrayNode.get(5).getAsJsonObject();
                         String qualifier = objectNode.get("Col2").getAsString();
                         if(qualifier == null || qualifier.equalsIgnoreCase(""))
@@ -89,6 +127,19 @@ public final class ModifiersFactory
             System.out.println("WARNING!!! EXCEPTION CAUGHT on getAllModifiers Method");
         }
         return allMods;
+    }
+
+    private static boolean isHalfEnabled(String halfEnabledString)
+    {
+
+        if(!(halfEnabledString == null || halfEnabledString.equalsIgnoreCase("")))
+        {
+            if (halfEnabledString.contains("1"))
+                return true;
+            else
+                return false;
+        }
+        return false;
     }
 
     private static boolean isDuplicate(List<ModEntry> allMods, ModEntry newMod)

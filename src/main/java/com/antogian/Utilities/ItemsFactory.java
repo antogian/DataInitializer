@@ -41,41 +41,68 @@ public final class ItemsFactory
                         if(name == null || name.equals(""))
                             continue;
                         itemRow.setName(name);
+
                         int index = objectNode.get("Col5").getAsInt();
                         itemRow.setIndex(index);
-                        int[][] inclusions = new int[6][];
+
+                        String taxable = objectNode.get("Col39").getAsString();
+                        if(taxable != null && taxable != "")
+                            if(taxable.equalsIgnoreCase("1"))
+                                itemRow.setTaxable(true);
+
+                        Integer[][] inclusions = new Integer[6][];
+
                         String inclusions1 = objectNode.get("Col16").getAsString();
                         inclusions[0] = getInclusionsAsArray(inclusions1);
+                        List<Integer> inclusionsOne = new ArrayList<Integer>(Arrays.asList(inclusions[0]));
+                        itemRow.setInclusions1(inclusionsOne);
+
                         String inclusions2 = objectNode.get("Col17").getAsString();
                         inclusions[1] = getInclusionsAsArray(inclusions2);
+                        List<Integer> inclusionsTwo = new ArrayList<Integer>(Arrays.asList(inclusions[1]));
+                        itemRow.setInclusions2(inclusionsTwo);
+
                         String inclusions3 = objectNode.get("Col18").getAsString();
                         inclusions[2] = getInclusionsAsArray(inclusions3);
+                        List<Integer> inclusionsThree = new ArrayList<Integer>(Arrays.asList(inclusions[2]));
+                        itemRow.setInclusions3(inclusionsThree);
+
                         String inclusions4 = objectNode.get("Col19").getAsString();
                         inclusions[3] = getInclusionsAsArray(inclusions4);
+                        List<Integer> inclusionsFour = new ArrayList<Integer>(Arrays.asList(inclusions[3]));
+                        itemRow.setInclusions4(inclusionsFour);
+
                         String inclusions5 = objectNode.get("Col20").getAsString();
                         inclusions[4] = getInclusionsAsArray(inclusions5);
+                        List<Integer> inclusionsFive = new ArrayList<Integer>(Arrays.asList(inclusions[4]));
+                        itemRow.setInclusions5(inclusionsFive);
+
                         String inclusions6 = objectNode.get("Col21").getAsString();
                         inclusions[5] = getInclusionsAsArray(inclusions6);
-                        itemRow.setInclusions(inclusions);
+                        List<Integer> inclusionsSix = new ArrayList<Integer>(Arrays.asList(inclusions[5]));
+                        itemRow.setInclusions6(inclusionsSix);
 
-                        int[] freeChoices = new int[6];
-                        int[] requiredChoices = new int[6];
+                        //itemRow.setInclusions(inclusions);
+
+                        List<Integer> freeChoices = new ArrayList<Integer>();
+                        List<Integer> requiredChoices = new ArrayList<Integer>();
                         for(int x=0; x<5; x++)
                         {
                             String jsonChoices = objectNode.get("Col" +(28+x)).getAsString();
                             int[] choices = getChoices(jsonChoices);
-                            requiredChoices[x] = choices[0];
-                            freeChoices[x] = choices[1];
+                            //TODO: Needs testing
+                            requiredChoices.add(choices[0]);
+                            freeChoices.add(choices[1]);
                         }
                         itemRow.setRequiredModEntries(requiredChoices);
                         itemRow.setFreeModEntries(freeChoices);
 
-                        double[] cost = new double[5];
+                        List<Double> cost = new ArrayList<Double>();
                         for(int x=0; x<5; x++)
                         {
                             String costString = objectNode.get("Col4" + x).getAsString();
                             if(!(costString == null || costString.equals("")))
-                                cost[x] = objectNode.get("Col4" + x).getAsDouble();
+                                cost.add(objectNode.get("Col4" + x).getAsDouble());
                         }
                         itemRow.setCost(cost);
 
@@ -84,7 +111,9 @@ public final class ItemsFactory
                         {
                             int modIndex = 21+k;
                             String modName = objectNode.get("Col" + modIndex).getAsString();
-                            itemMods.add(getModifier(modName, modsList));
+                            Modifier newModifier = getModifier(modName, modsList);
+                            if(newModifier.getName() != null)
+                                itemMods.add(newModifier);
                         }
                         itemRow.setModifiers(itemMods);
 
@@ -137,27 +166,27 @@ public final class ItemsFactory
         return inclusions;
     }
 
-    private static int[] getInclusionsAsArray(String jsonInclusions)
+    private static Integer[] getInclusionsAsArray(String jsonInclusions)
     {
         if(!(jsonInclusions == null || jsonInclusions.equals("") || !jsonInclusions.matches(".*\\d+.*")))
         {
-                String[] parts = jsonInclusions.split(",");
-                List<Integer> ints = new ArrayList<Integer>();
-                for (int i = 0; i < parts.length; i++)
+            String[] parts = jsonInclusions.split(",");
+            List<Integer> ints = new ArrayList<Integer>();
+            for (int i = 0; i < parts.length; i++)
+            {
+                if(!(parts[i] == null || parts[i].equals("") || !parts[i].matches(".*\\d+.*")))
                 {
-                    if(!(parts[i] == null || parts[i].equals("") || !parts[i].matches(".*\\d+.*")))
-                    {
-                        ints.add(Integer.parseInt(parts[i]));
-                    }
+                    ints.add(Integer.parseInt(parts[i]));
                 }
-                int[] integers = new int[ints.size()];
-                for (int i = 0; i < ints.size(); i++)
-                {
-                    integers[i] = ints.get(i);
-                }
-                return integers;
+            }
+            Integer[] integers = new Integer[ints.size()];
+            for (int i = 0; i < ints.size(); i++)
+            {
+                integers[i] = ints.get(i);
+            }
+            return integers;
         }
-        return new int[0];
+        return new Integer[0];
     }
 
     private static Modifier getModifier(String modString, List<Modifier> allMods)
